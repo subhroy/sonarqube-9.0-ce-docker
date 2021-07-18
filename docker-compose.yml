@@ -1,0 +1,47 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:9.6.15
+    container_name: postgres
+    ports:
+      - 5432:5432
+    environment:
+      TZ: Asia/Bangalore
+      POSTGRES_USER: <psql_userId>
+      POSTGRES_PASSWORD: <psql_password>
+    networks:
+      - my-net
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+
+  sonar:
+    image: sonarqube:9.0.0-community
+    container_name: sonar
+    depends_on: 
+      - postgres
+    volumes:
+      - /home/sonarqube/extensions:/opt/sonarqube/extensions
+      - /home/sonarqube/logs:/opt/sonarqube/logs
+      - /home/sonarqube/data:/opt/sonarqube/data
+      - /home/sonarqube/conf:/opt/sonarqube/conf
+    ports:
+      - 9000:9000    
+    environment:
+      TZ: Asia/Bangalore
+      SONARQUBE_JDBC_USERNAME: <psql_userId>
+      SONARQUBE_JDBC_PASSWORD: <psql_password>
+      SONARQUBE_JDBC_URL: jdbc:postgresql://postgres:5432/sonar
+    networks:
+      - my-net
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+
+networks:
+	my-net:
+      driver: bridge
