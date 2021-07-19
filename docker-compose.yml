@@ -43,5 +43,5 @@ services:
         max-file: "10"
 
 networks:
-	my-net:
+    my-net:
       driver: bridge
